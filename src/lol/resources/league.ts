@@ -18,7 +18,7 @@ export class League {
     }
 
     /* /lol/league/v4/entries/by-puuid/{encryptedPUUID} */
-    async getLeagueEntryByPuuid(puuid: string): Promise<LeagueEntryDto | null> {
+    async getLeagueEntriesByPuuid(puuid: string): Promise<LeagueEntryDto[] | null> {
         try {
             return await this.client.get('la1', `/lol/league/v4/entries/by-puuid/${puuid}`);
         } catch (error) {

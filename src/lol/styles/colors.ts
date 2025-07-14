@@ -1,27 +1,27 @@
 import {ColorResolvable} from 'discord.js';
 
 export const colors = {
-    /** Deep, mystical blue background */
+    green: '#00C896',
+    yellow: '#F3C969',
+    red: '#C03838',
+    blue: '#00FFFF',
+    purple: '#9B4DE0',
+    accentGlow: '#66FFF9',
     darkBlue: '#0A1428',
-
-    /** Lighter blue for accents and highlights */
     mediumBlue: '#1E3A5F',
-
-    /** Glowing cyan for energy effects */
     hextechCyan: '#00FFFF',
-
-    /** Softer cyan for glows/fades */
     glowCyan: '#00C8FF',
-
-    /** Rich gold for ornate metal accents */
     hextechGold: '#C89B3C',
-
-    /** Brushed metal with a warm bronze tone */
-    bronze: '#A37C27',
-
-    /** Cold steel used in frames and machinery */
     steelGray: '#2C2F3A',
-
-    /** Light gray for UI highlights */
     lightGray: '#B5BDC6',
+    iron: '#3e3330', // '#61534E',
+    bronze: '#553e39', // '#A97142',
+    silver: '#7f8a93', // '#C0C0C0',
+    gold: '#ceaf72', // '#efbc2e',
+    platinum: '#488893', // '#1ABC9C',
+    emerald: '#479c48', // '#50C878',
+    diamond: '#55b9e1', // '#5BCEFA',
+    master: '#a944ed', // '#BE50F4',
+    grandmaster: '#8c3429', // '#FF4655',
+    challenger: '#c4f9fe',
 } as const satisfies Record<string, ColorResolvable>;
