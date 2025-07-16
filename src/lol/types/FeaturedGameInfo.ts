@@ -1,6 +1,6 @@
 import {BannedChampion} from './BannedChampion';
 import {Observer} from './observer';
-import {Participant} from './Participan';
+import {Participant} from './Participant';
 
 export interface FeaturedGameInfo {
   /**

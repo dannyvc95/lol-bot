@@ -1,5 +1,5 @@
 import {GameCustomizationObject} from './GameCustomizationObject';
-import {Perks} from './Peks';
+import {Perks} from './Perks';
 
 export interface CurrentGameParticipant {
   /**

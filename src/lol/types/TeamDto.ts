@@ -1,43 +1,53 @@
-import {PlayerDto} from './PlayerDto';
+export interface Ban {
+  /** ID of the banned champion */
+  championId: number;
+
+  /** The pick turn when the champion was banned */
+  pickTurn: number;
+}
+
+export interface Feat {
+  /** State of the feat (e.g., 2, 1001) */
+  featState: number;
+}
+
+export interface Feats {
+  [key: string]: Feat;
+}
+
+export interface Objective {
+  /** Whether the team secured the first of this objective */
+  first: boolean;
+
+  /** Total number of this objective secured */
+  kills: number;
+}
+
+export interface Objectives {
+  atakhan: Objective;
+  baron: Objective;
+  champion: Objective;
+  dragon: Objective;
+  horde: Objective;
+  inhibitor: Objective;
+  riftHerald: Objective;
+  tower: Objective;
+}
 
 export interface TeamDto {
-  /**
-   * Unique identifier of the team.
-   */
-  id: string;
+  /** Array of banned champions with their pick turns */
+  bans: Ban[];
 
-  /**
-   * Identifier of the tournament the team belongs to.
-   */
-  tournamentId: number;
+  /** Object representing various team feats */
+  feats: Feats;
 
-  /**
-   * Full name of the team.
-   */
-  name: string;
+  /** Team's performance on different objectives */
+  objectives: Objectives;
 
-  /**
-   * Icon ID associated with the team.
-   */
-  iconId: number;
+  /** Team identifier (100 or 200) */
+  teamId: number;
 
-  /**
-   * Tier level of the team.
-   */
-  tier: number;
-
-  /**
-   * Summoner ID of the team captain.
-   */
-  captain: string;
-
-  /**
-   * Short abbreviation of the team name.
-   */
-  abbreviation: string;
-
-  /**
-   * List of players who are members of the team.
-   */
-  players: PlayerDto[];
+  /** Whether the team won the match */
+  win: boolean;
 }
+

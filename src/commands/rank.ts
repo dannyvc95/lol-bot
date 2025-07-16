@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {
     APIEmbedField,
     bold,
@@ -6,11 +7,14 @@ import {
     RestOrArray,
     SlashCommandBuilder,
     SlashCommandStringOption,
+    unorderedList,
+    userMention,
 } from 'discord.js';
 import {QueueType} from '../lol/types';
 import {RiotGamesClient} from '../lol/client';
 import {colors} from '../lol/styles/colors';
-import {capitalize} from '../utils';
+import {capitalize, fieldDivisor} from '../utils';
+import {errorEmbed} from '../templates/errorEmbed';
 
 const rankCommandOptions = {
     summoner: 'invocador',
@@ -57,18 +61,25 @@ export async function executeRankCommand(interaction: ChatInputCommandInteractio
 
         console.log(riotId, queue);
 
-        const embed = await getRankEmbed(riotId, queue);
+        const embed = await getRankEmbed(riotId, queue, interaction.member?.user.id);
 
         if (embed) {
             return await interaction.reply({embeds: [embed]});
         }
+
+        const errorMessage = `Lo siento, no pude encontrar a ${bold(riotId)}.\n\nPor favor verifica que:
+        ${unorderedList([
+        'El nombre de usuario y el tag estén escritos correctamente.',
+        `La cuenta pertenezca a la región ${bold('LAN')}.`])}`;
+
+        return await interaction.reply({embeds: [errorEmbed(errorMessage)]});
 
     } catch (error) {
         console.error(error);
     }
 }
 
-async function getRankEmbed(riotId: string, queue: QueueType): Promise<EmbedBuilder | null> {
+async function getRankEmbed(riotId: string, queue: QueueType, userId?: string): Promise<EmbedBuilder | null> {
     try {
         const gameName = riotId.split('#').at(0);
         const tagLine = riotId.split('#').at(1);
@@ -80,29 +91,58 @@ async function getRankEmbed(riotId: string, queue: QueueType): Promise<EmbedBuil
             if (account) {
                 const leagueEntries = await client.league.getLeagueEntriesByPuuid(account.puuid);
                 const leagueEntry = leagueEntries?.find(({queueType}) => queueType === queue);
+                const summoner = await client.summoner.getSummonerByPuuid(account.puuid);
+                const championMastery = await client.championMastery.getChampionMasteriesTopByPuuid(account.puuid);
+
+                const topChampions = [];
+                if (championMastery) {
+                    const topChampionsIds = championMastery.map(({championId}) => championId);
+                    for (const championId of topChampionsIds) {
+                        const res = await fetch(`https://cdn.communitydragon.org/${process.env.PATCH_VERSION}/champion/${championId}/data`);
+                        if (res.ok) {
+                            const champion = await res.json();
+                            topChampions.push(champion?.name);
+                        }
+                    }
+                }
 
                 if (leagueEntry) {
                     const winRate = Math.ceil((leagueEntry.wins / (leagueEntry.wins + leagueEntry.losses)) * 100);
 
                     const fields: RestOrArray<APIEmbedField> = [
+                        ...fieldDivisor(1),
                         {
-                            name: `🏆 ${queue === 'RANKED_SOLO_5x5' ? 'Solo/dúo' : 'Flexible'}`,
-                            value: `${capitalize(leagueEntry.tier)} ${leagueEntry.rank} ${leagueEntry.leaguePoints} PL`,
-                            inline: true
+                            name: `🏆 Clasificatoria ${queue === 'RANKED_SOLO_5x5' ? 'solo/dúo' : 'flexible'}:`,
+                            value: `${capitalize(leagueEntry.tier)} ${leagueEntry.rank} (${leagueEntry.leaguePoints} PL)`,
+                            inline: false
                         },
+                        ...fieldDivisor(1),
                         {
-                            name: '📊 Tasa de victoria',
-                            value: `${winRate}% ${leagueEntry.wins}V ${leagueEntry.losses}D`,
-                            inline: true
+                            name: '📊 Tasa de victoria:',
+                            value: `${winRate}% / ${leagueEntry.wins} Victorias / ${leagueEntry.losses} Derrotas`,
+                            inline: false
+                        },
+                        ...fieldDivisor(1),
+                        {
+                            name: '🕹️ Partidas jugadas:',
+                            value: `${leagueEntry.wins + leagueEntry.losses} partidas`,
+                            inline: false
+                        },
+                        ...fieldDivisor(1),
+                        {
+                            name: '⭐️ Campeones favoritos:',
+                            value: topChampions.join(', '),
+                            inline: false
                         }
                     ];
 
                     const embed = new EmbedBuilder()
-                        .setTitle(`${bold(riotId)}`)
-                        .setDescription('Esta es tu información de clasificatoria:')
+                        .setTitle(`${bold(riotId)} - ${queue === 'RANKED_SOLO_5x5' ? 'Solo/Dúo' : 'Flexible'}`)
+                        .setDescription(`Hola ${userId ? userMention(userId) : 'invocador'}, esta es la información que encontré de ${bold(riotId)}:`)
                         .setColor(colors[leagueEntry.tier.toLowerCase() as keyof unknown])
                         .setImage(`${process.env.LOCAL_ASSETS_URL}/emblems/${leagueEntry.tier.toLowerCase()}.png`)
-                        .setURL(`https://op.gg/lol/summoners/lan/${gameName}-${tagLine}`)
+                        .setURL(encodeURI(`https://op.gg/lol/summoners/lan/${gameName}-${tagLine}`))
+                        .setThumbnail(`https://cdn.communitydragon.org/${process.env.PATCH_VERSION}/profile-icon/${summoner?.profileIconId}`)
                         .setFields(fields);
 
                     return embed;

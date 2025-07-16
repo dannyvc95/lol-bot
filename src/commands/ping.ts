@@ -19,7 +19,7 @@ export async function executePingCommand(interaction: ChatInputCommandInteractio
         const embed = new EmbedBuilder()
             .setTitle(bold('Pong!'))
             .setDescription('El bot está en línea.\n\nEstado actual del servicio de League of Legends:')
-            .setColor(colors.green)
+            .setColor(colors.emerald)
             .setThumbnail('https://media.giphy.com/media/7mK9NefOGX6XqnnNGo/giphy.gif');
 
         const client = new RiotGamesClient();
@@ -81,7 +81,7 @@ export async function executePingCommand(interaction: ChatInputCommandInteractio
 function formatLolStatusContent(status: StatusDto[]): string[] {
     const items: string[] = [];
 
-    const matchLocale = (locale: string) => locale === process.env.PREFERRED_LOCALE;
+    const matchLocale = (locale: string) => locale === process.env.LOCALE;
 
     status.forEach(({titles, updates}) => {
         const title = titles.find(({locale}) => matchLocale(locale))?.content ?? '';

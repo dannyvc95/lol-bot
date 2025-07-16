@@ -11,6 +11,7 @@ import {Spectator} from './resources/spectator';
 import {Match} from './resources/match';
 import {League} from './resources/league';
 import {LolChallenges} from './resources/lolChallenges';
+import {Summoner} from './resources/summoner';
 
 type RiotGamesApi = 'americas' | 'la1';
 
@@ -25,6 +26,7 @@ export class RiotGamesClient {
     public readonly spectator: Spectator;
     public readonly match: Match;
     public readonly league: League;
+    public readonly summoner: Summoner;
 
     private readonly apiKey: string = process.env.RIOT_GAMES_API_KEY || '';
 
@@ -44,6 +46,7 @@ export class RiotGamesClient {
         this.spectator = new Spectator(this);
         this.match = new Match(this);
         this.league = new League(this);
+        this.summoner = new Summoner(this);
     }
 
     async get<T = unknown>(api: RiotGamesApi, path: string): Promise<T> {
