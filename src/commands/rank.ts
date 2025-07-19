@@ -3,6 +3,7 @@ import {
     APIEmbedField,
     bold,
     ChatInputCommandInteraction,
+    codeBlock,
     EmbedBuilder,
     RestOrArray,
     SlashCommandBuilder,
@@ -13,7 +14,7 @@ import {
 import {QueueType} from '../lol/types';
 import {RiotGamesClient} from '../lol/client';
 import {colors} from '../lol/styles/colors';
-import {capitalize, fieldDivisor} from '../utils';
+import {capitalize, emptyFields} from '../utils';
 import {errorEmbed} from '../templates/errorEmbed';
 
 const rankCommandOptions = {
@@ -56,7 +57,9 @@ export async function executeRankCommand(interaction: ChatInputCommandInteractio
             'RANKED_SOLO_5x5';
 
         if (!riotId.includes('#')) {
-            return await interaction.reply('Riot ID incompleto, asegurate the incluir tu lema.');
+            const errorMessage = `Asegurate de utilizar el formato correcto, por ejemplo: ${codeBlock('NoxMajesty#LAN')}`;
+
+            return await interaction.reply({embeds: [errorEmbed(errorMessage)]});
         }
 
         console.log(riotId, queue);
@@ -110,25 +113,25 @@ async function getRankEmbed(riotId: string, queue: QueueType, userId?: string): 
                     const winRate = Math.ceil((leagueEntry.wins / (leagueEntry.wins + leagueEntry.losses)) * 100);
 
                     const fields: RestOrArray<APIEmbedField> = [
-                        ...fieldDivisor(1),
+                        ...emptyFields(1),
                         {
                             name: `🏆 Clasificatoria ${queue === 'RANKED_SOLO_5x5' ? 'solo/dúo' : 'flexible'}:`,
                             value: `${capitalize(leagueEntry.tier)} ${leagueEntry.rank} (${leagueEntry.leaguePoints} PL)`,
                             inline: false
                         },
-                        ...fieldDivisor(1),
+                        ...emptyFields(1),
                         {
                             name: '📊 Tasa de victoria:',
                             value: `${winRate}% / ${leagueEntry.wins} Victorias / ${leagueEntry.losses} Derrotas`,
                             inline: false
                         },
-                        ...fieldDivisor(1),
+                        ...emptyFields(1),
                         {
                             name: '🕹️ Partidas jugadas:',
                             value: `${leagueEntry.wins + leagueEntry.losses} partidas`,
                             inline: false
                         },
-                        ...fieldDivisor(1),
+                        ...emptyFields(1),
                         {
                             name: '⭐️ Campeones favoritos:',
                             value: topChampions.join(', '),

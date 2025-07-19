@@ -6,5 +6,5 @@ export function errorEmbed(description: string) {
         .setTitle(bold('Algo salió mal...'))
         .setDescription(description)
         .setColor(colors.grandmaster)
-        .setImage('https://media.giphy.com/media/Jp5TA7lfVfiOZ3hL53/giphy.gif');
+        .setThumbnail('https://media.giphy.com/media/6vjrlLxW0fJlSD2Xvy/giphy.gif');
 }

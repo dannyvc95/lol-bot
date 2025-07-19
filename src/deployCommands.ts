@@ -2,12 +2,14 @@ import {REST, Routes} from 'discord.js';
 import {config} from 'dotenv';
 import {pingCommand} from './commands/ping';
 import {rankCommand} from './commands/rank';
+import {counterCommand} from './commands/counter';
 
 config();
 
 const commands = [
     pingCommand.toJSON(),
-    rankCommand.toJSON()
+    rankCommand.toJSON(),
+    counterCommand.toJSON(),
 ];
 
 const rest = new REST({version: '10'}).setToken(process.env.DISCORD_BOT_TOKEN!);

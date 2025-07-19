@@ -34,4 +34,14 @@ client.on(Events.InteractionCreate, async (interactionCreate: Interaction<CacheT
     }
 });
 
+client.on(Events.MessageCreate, async (messageCreate) => {
+    try {
+        if (messageCreate.content.startsWith('!nox')) {
+            return await messageCreate.reply('Hola, Nox no está disponible en este momento.');
+        }
+    } catch (error) {
+        console.error(error);
+    }
+});
+
 client.login(process.env.DISCORD_BOT_TOKEN);
