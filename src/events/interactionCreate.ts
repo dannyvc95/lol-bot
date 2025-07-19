@@ -10,8 +10,6 @@ export const handleInteractionCreate = async (interaction: Interaction<CacheType
         if (interaction.isAutocomplete()) {
             const focusedOption = interaction.options.getFocused(true);
 
-            console.log(interaction.commandName, focusedOption.name);
-
             if (interaction.commandName === 'counter' && focusedOption.name === counterCommandOptions.champion) {
                 const query = focusedOption.value.toLowerCase();
 
